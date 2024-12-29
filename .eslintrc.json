@@ -24,6 +24,19 @@
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["@app", "./src/app"],
+          ["@assets", "./src/assets"],
+          ["@features", "./src/features"],
+          ["@pages", "./src/pages"],
+          ["@processes", "./src/processes"],
+          ["@shared", "./src/shared"]
+        ],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
     }
   },
   "plugins": [
@@ -36,6 +49,7 @@
   ],
   "rules": {
     "prettier/prettier": "warn",
+    "import/default": "warn",
     "react/react-in-jsx-scope": "off",
     "no-multiple-empty-lines": [
       "error",
@@ -51,21 +65,10 @@
       {
         "groups": [
           ["builtin", "external"],
-          ["internal"],
+          "internal",
           ["parent", "sibling", "index"]
         ],
-        "pathGroups": [
-          {
-            "pattern": "**/*.css",
-            "group": "object",
-            "position": "after"
-          }
-        ],
-        "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
+        "newlines-between": "always"
       }
     ]
   }
