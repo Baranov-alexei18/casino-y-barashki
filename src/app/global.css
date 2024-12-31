@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: var(--background-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -47,12 +47,51 @@
   --chip-color: #f5a623;
   --roulette-wheel-color: #e74c3c;
   --slot-machine-color: #9b59b6;
+
+  /* gaps */
+  --gap-0: 0px;
+  --gap-2: 2px;
+  --gap-4: 4px;
+  --gap-8: 8px;
+  --gap-12: 12px;
+  --gap-16: 16px;
+  --gap-20: 20px;
+  --gap-24: 24px;
+  --gap-28: 28px;
+  --gap-32: 32px;
+  --gap-36: 36px;
+  --gap-40: 40px;
+  --gap-44: 44px;
+  --gap-48: 48px;
+  --gap-52: 52px;
+  --gap-56: 56px;
+  --gap-60: 60px;
+  --gap-64: 64px;
+  --gap-68: 68px;
+  --gap-72: 72px;
+  --gap-76: 76px;
+  --gap-80: 80px;
+  --gap-84: 84px;
+  --gap-88: 88px;
+  --gap-92: 92px;
+  --gap-96: 96px;
+  --gap-100: 100px;
+
+  /* font-size */
+  --size-12: 12px;
+  --size-16: 16px;
+  --size-18: 18px;
+  --size-20: 20px;
+  --size-22: 22px;
+  --size-24: 24px;
 }
 
 body {
   margin: 0 auto;
   display: flex;
   place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+}
+
+div {
+  width: 100%;
 }
