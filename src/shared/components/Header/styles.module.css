@@ -24,6 +24,10 @@
 .catalogButton,
 .searchButton,
 .burger {
+  display: flex;
+  gap: var(--gap-24);
+  align-items: center;
+  justify-items: center;
   background: none;
   border: none;
   color: white;
@@ -44,18 +48,16 @@
 }
 
 .logoContainer {
-  width: 200px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  width: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .logoWrapper {
-  position: relative;
-  top: -32px;
+  position: absolute;
+  top: -20px;
+  right: 48%;
   width: 80px;
   height: 80px;
   background-color: var(--secondary-background-color);

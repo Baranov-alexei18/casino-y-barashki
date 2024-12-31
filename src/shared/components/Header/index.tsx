@@ -3,11 +3,13 @@ import { MenuOutlined, AppstoreAddOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
 import Logo from "@assets/images/logo-barashka.png";
+import { useStoreMoneyAccount } from "@app/store/useStoreMoneyAccount";
 
 import styles from "./styles.module.css";
 
 export const Header: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data } = useStoreMoneyAccount((state) => state);
 
   const toggleMenu = () => {
     setIsMenuOpen((prevState) => !prevState);
@@ -27,8 +29,8 @@ export const Header: FC = () => {
             <img src={Logo} alt="Project Logo" />
           </Link>
         </div>
-
         <div className={styles.burger} onClick={toggleMenu}>
+          <div>{"Deposit: " + data}</div>
           <MenuOutlined style={{ fontSize: "24px" }} />
         </div>
       </div>
