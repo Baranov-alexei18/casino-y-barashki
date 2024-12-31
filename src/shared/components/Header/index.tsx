@@ -1,5 +1,6 @@
 import React, { FC, useState } from "react";
 import { MenuOutlined, AppstoreAddOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 import Logo from "@assets/images/logo-barashka.png";
 
@@ -22,9 +23,9 @@ export const Header: FC = () => {
           <AppstoreAddOutlined style={{ fontSize: "24px" }} />
         </button>
         <div className={styles.logoWrapper}>
-          <div className={styles.logoContainer}>
+          <Link to={"/"} className={styles.logoContainer}>
             <img src={Logo} alt="Project Logo" />
-          </div>
+          </Link>
         </div>
 
         <div className={styles.burger} onClick={toggleMenu}>
