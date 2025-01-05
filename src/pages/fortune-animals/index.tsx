@@ -60,7 +60,7 @@ export const FortuneAnimalsPage = () => {
   const spinSlots = () => {
     spinAudio.play();
 
-    const newColumns = columns.map((column, index) => ({
+    const newColumns = columns.map((column) => ({
       ...column,
       isSpinning: true,
       stopIndex: Math.floor(Math.random() * SLOT_IMAGES.length),
