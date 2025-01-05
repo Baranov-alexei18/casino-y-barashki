@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
-import spinSound from "@assets/audio/fortune-animals/spin.mp3"; // Звук начала прокрутки
+import spinSound from "@assets/audio/fortune-animals/spin.mp3";
 import Bear from "@assets/images/games/fortune-animals/bear.png";
 import Bull from "@assets/images/games/fortune-animals/bull.png";
 import Gorilla from "@assets/images/games/fortune-animals/gorilla.png";
@@ -10,137 +9,150 @@ import Owl from "@assets/images/games/fortune-animals/owl.png";
 import Panda from "@assets/images/games/fortune-animals/panda.png";
 import Rabbit from "@assets/images/games/fortune-animals/rabbit.png";
 import Raccoon from "@assets/images/games/fortune-animals/raccoon.png";
+import { useStoreMoneyAccount } from "@app/store/useStoreMoneyAccount";
 
 import styles from "./styles.module.css";
+import { calculatePayout, getCombination, getRandomImages } from "./utils";
+import { SlotColumn } from "./stop-column";
+import { CombinationKeys } from "./types";
 
 export const SLOT_IMAGES = [
-  Bear,
-  Bull,
-  Gorilla,
-  Lion,
-  Owl,
-  Panda,
-  Rabbit,
-  Raccoon,
+  { name: "Bear", image: Bear },
+  { name: "Bull", image: Bull },
+  { name: "Gorilla", image: Gorilla },
+  { name: "Lion", image: Lion },
+  { name: "Owl", image: Owl },
+  { name: "Panda", image: Panda },
+  { name: "Rabbit", image: Rabbit },
+  { name: "Raccoon", image: Raccoon },
 ];
 
-const getRandomImages = () => {
-  const shuffled = [...SLOT_IMAGES].sort(() => Math.random() - 0.5);
-  return shuffled.concat(shuffled); // Удваиваем массив для бесшовной прокрутки
-};
-
 export const FortuneAnimalsPage = () => {
-  const [slots, setSlots] = useState([
-    getRandomImages(),
-    getRandomImages(),
-    getRandomImages(),
-  ]);
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [stopIndexes, setStopIndexes] = useState([0, 0, 0]); // Индексы остановки
+  const { data: balance, setMoney } = useStoreMoneyAccount((state) => state);
+  const [bet, setBet] = useState(100);
 
-  const spinAudio = new Audio(spinSound); // Загружаем звук вращения один раз
+  const [columns, setColumns] = useState([
+    { images: getRandomImages(), isSpinning: false, stopIndex: 0 },
+    { images: getRandomImages(), isSpinning: false, stopIndex: 0 },
+    { images: getRandomImages(), isSpinning: false, stopIndex: 0 },
+  ]);
+
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const resultCalculatedRef = useRef(false);
+  const spinAudio = new Audio(spinSound);
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+    };
+  }, []);
+
+  const handleWin = (payout: number) => {
+    const currentBalance = useStoreMoneyAccount.getState().data;
+    updateBalance(currentBalance + payout);
+  };
+
+  const updateBalance = (total: number) => {
+    setMoney(total);
+    localStorage.setItem("balance", JSON.stringify(total));
+  };
 
   const spinSlots = () => {
-    setIsSpinning(true);
-
-    // Запуск звука вращения
     spinAudio.play();
 
-    // Генерация случайных индексов остановки для каждой колонки
-    const newStopIndexes = [0, 1, 2].map(() =>
-      Math.floor(Math.random() * SLOT_IMAGES.length),
-    );
+    const newColumns = columns.map((column, index) => ({
+      ...column,
+      isSpinning: true,
+      stopIndex: Math.floor(Math.random() * SLOT_IMAGES.length),
+    }));
 
-    // Старт прокрутки
-    setTimeout(() => stopColumn(0, newStopIndexes[0]), 2000); // Первая колонка
-    setTimeout(() => stopColumn(1, newStopIndexes[1]), 2500); // Вторая колонка
-    setTimeout(() => stopColumn(2, newStopIndexes[2]), 3000); // Третья колонка
-  };
+    setColumns(newColumns);
 
-  const stopColumn = (index: number, stopIndex: number) => {
-    setStopIndexes((prev) => {
-      const updated = [...prev];
-      updated[index] = stopIndex;
-      return updated;
+    newColumns.forEach((column, index) => {
+      const timeoutId = setTimeout(
+        () => stopColumn(index, column.stopIndex),
+        (index + 1) * 1000,
+      );
+      timeoutsRef.current.push(timeoutId);
     });
-
-    if (index === 2) {
-      setIsSpinning(false); // Завершение вращения всех колонок
-
-      // Остановка звука после окончания прокрутки
-      // Задержка 0.5 сек (чтобы дождаться завершения всех анимаций)
-      setTimeout(() => {
-        spinAudio.pause();
-        spinAudio.currentTime = 0; // Сброс времени аудио
-      }, 500); // Настроим задержку, чтобы звук остановился после завершения анимации
-    }
   };
+
+  const handleSpin = useCallback(() => {
+    const currentBalance = useStoreMoneyAccount.getState().data;
+
+    if (bet > currentBalance) {
+      alert("Insufficient balance!");
+      return;
+    }
+
+    resultCalculatedRef.current = false;
+    updateBalance(currentBalance - bet);
+    spinSlots();
+  }, [bet, spinSlots, updateBalance]);
+
+  const stopColumn = useCallback(
+    (columnIndex: number, stopIndex: number) => {
+      setColumns((prevColumns) => {
+        const updatedColumns = [...prevColumns];
+        updatedColumns[columnIndex] = {
+          ...updatedColumns[columnIndex],
+          isSpinning: false,
+          stopIndex,
+        };
+
+        const allStopped = updatedColumns.every((col) => !col.isSpinning);
+
+        if (allStopped && !resultCalculatedRef.current) {
+          resultCalculatedRef.current = true;
+          spinAudio.pause();
+          spinAudio.currentTime = 0;
+
+          setTimeout(() => {
+            const centralRow = updatedColumns.map((col) => {
+              const centralIndex = (col.stopIndex + 1) % SLOT_IMAGES.length;
+              return col.images[centralIndex];
+            });
+
+            const combination = getCombination(centralRow);
+            const payout = calculatePayout(combination as CombinationKeys, bet);
+
+            handleWin(payout);
+
+            alert(
+              `Central Row: ${JSON.stringify(
+                centralRow,
+              )}\nCombination: ${combination}\nYou bet: ${bet}\nYou won: ${payout}`,
+            );
+          }, 1100);
+        }
+
+        return updatedColumns;
+      });
+    },
+    [bet, handleWin, spinAudio],
+  );
 
   return (
     <div className={styles.slotMachine}>
       <h1>Fortune Animals</h1>
       <div className={styles.slotsContainer}>
-        {slots.map((slot, index) => (
+        {columns.map((column, index) => (
           <SlotColumn
             key={index}
-            images={slot}
-            isSpinning={isSpinning}
-            stopIndex={stopIndexes[index]}
-            duration={0.5} // Увеличенная скорость прокрутки
+            images={column.images}
+            isSpinning={column.isSpinning}
+            stopIndex={column.stopIndex}
+            duration={1}
           />
         ))}
       </div>
       <button
-        onClick={spinSlots}
-        disabled={isSpinning}
+        onClick={handleSpin}
+        disabled={columns.some((col) => col.isSpinning)}
         className={styles.spinButton}
       >
-        {isSpinning ? "Spinning..." : "Spin"}
+        {columns.some((col) => col.isSpinning) ? "Spinning..." : "Spin"}
       </button>
     </div>
   );
 };
-
-// eslint-disable-next-line react/display-name
-const SlotColumn = React.memo(
-  ({
-    images,
-    isSpinning,
-    stopIndex,
-    duration,
-  }: {
-    images: string[];
-    isSpinning: boolean;
-    stopIndex: number;
-    duration: number;
-  }) => {
-    const offset = stopIndex * 70; // Высота одного изображения
-
-    return (
-      <div className={styles.slot}>
-        <motion.div
-          className={styles.reel}
-          animate={{
-            y: isSpinning
-              ? [-images.length * 60, 0] // Анимация при вращении
-              : -offset, // Остановка в нужном положении
-          }}
-          transition={{
-            duration: isSpinning ? duration : 0.6, // Плавный переход к финальному положению
-            ease: "linear",
-            repeat: isSpinning ? Infinity : 0, // Запрещаем повторение анимации после остановки
-          }}
-          style={{
-            willChange: "transform", // Оптимизация
-          }}
-        >
-          {images.map((image, index) => (
-            <div key={index} className={styles.slotItem}>
-              <img src={image} alt={`Slot ${index + 1}`} />
-            </div>
-          ))}
-        </motion.div>
-      </div>
-    );
-  },
-);

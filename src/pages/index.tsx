@@ -9,11 +9,11 @@ export const App = () => {
   const { setMoney } = useStoreMoneyAccount((state) => state);
 
   useEffect(() => {
-    if (!localStorage.getItem("coins")) {
+    if (!localStorage.getItem("balance")) {
       setMoney(10000);
-      localStorage.setItem("coins", "10000");
+      localStorage.setItem("balance", "10000");
     } else {
-      const deposit = Number(localStorage.getItem("coins"));
+      const deposit = Number(localStorage.getItem("balance"));
       setMoney(deposit);
     }
   }, [setMoney]);
