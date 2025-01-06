@@ -12,7 +12,7 @@
     "plugin:jsx-a11y/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
-    "prettier"
+    "plugin:prettier/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": 12,
@@ -35,7 +35,11 @@
           ["@processes", "./src/processes"],
           ["@shared", "./src/shared"]
         ],
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
       }
     }
   },
@@ -70,6 +74,9 @@
         ],
         "newlines-between": "always"
       }
-    ]
+    ],
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "@typescript-eslint/no-unused-vars": "warn"
   }
 }

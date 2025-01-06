@@ -1,32 +1,31 @@
-import { Fragment, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 
-import styles from "./styles.module.css";
-import viteLogo from "../assets/vite.svg";
+import { Header } from "@shared/components/Header";
+import { APP_ROUTES } from "@app/routes";
+import { useStoreMoneyAccount } from "@app/store/useStoreMoneyAccount";
 
 export const App = () => {
-  const [count, setCount] = useState(0);
+  const { setMoney } = useStoreMoneyAccount((state) => state);
+
+  useEffect(() => {
+    if (!localStorage.getItem("balance")) {
+      setMoney(10000);
+      localStorage.setItem("balance", "10000");
+    } else {
+      const deposit = Number(localStorage.getItem("balance"));
+      setMoney(deposit);
+    }
+  }, [setMoney]);
 
   return (
-    <Fragment>
-      <div className={styles.wrapper}>
-        <a href="https://vite.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className={styles.logo} alt="Vite logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className={styles.card}>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className={styles.readTheDocs}>
-        Click on the Vite and React logos to learn more
-      </p>
-    </Fragment>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        {APP_ROUTES.map(({ path, component, id }) => (
+          <Route key={id} path={path} element={component} />
+        ))}
+      </Routes>
+    </BrowserRouter>
   );
 };
-
-export default App;

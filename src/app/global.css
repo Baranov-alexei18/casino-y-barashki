@@ -5,70 +5,95 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: var(--background-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  /* Основные цвета */
+  --background-color: #0b0d17;
+  --secondary-background-color: #1c1f2b;
+  --card-background-color: #2b2e3b;
+  --primary-text-color: #ffffff;
+  --secondary-text-color: #a6a6a6;
+  --border-color: #3b3f51;
+  /* Акцентные цвета */
+  --accent-gold: #f4b400;
+  --accent-red: #e63946;
+  --accent-green: #37c978;
+  --accent-blue: #2a9d8f;
+  --accent-purple: #8e44ad;
+
+  /* Состояния */
+  --success-color: #28a745;
+  --error-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+
+  /* Специальные эффекты */
+  --glow-gold: rgba(244, 180, 0, 0.6);
+  --glow-red: rgba(230, 57, 70, 0.6);
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --highlight-color: rgba(255, 255, 255, 0.1);
+
+  /* цвет кнопок */
+  --button-primary-bg: var(--accent-gold);
+  --button-primary-text: #ffffff;
+  --button-secondary-bg: var(--secondary-background-color);
+  --button-secondary-text: var(--primary-text-color);
+
+  --chip-color: #f5a623;
+  --roulette-wheel-color: #e74c3c;
+  --slot-machine-color: #9b59b6;
+
+  /* gaps */
+  --gap-0: 0px;
+  --gap-2: 2px;
+  --gap-4: 4px;
+  --gap-8: 8px;
+  --gap-12: 12px;
+  --gap-16: 16px;
+  --gap-20: 20px;
+  --gap-24: 24px;
+  --gap-28: 28px;
+  --gap-32: 32px;
+  --gap-36: 36px;
+  --gap-40: 40px;
+  --gap-44: 44px;
+  --gap-48: 48px;
+  --gap-52: 52px;
+  --gap-56: 56px;
+  --gap-60: 60px;
+  --gap-64: 64px;
+  --gap-68: 68px;
+  --gap-72: 72px;
+  --gap-76: 76px;
+  --gap-80: 80px;
+  --gap-84: 84px;
+  --gap-88: 88px;
+  --gap-92: 92px;
+  --gap-96: 96px;
+  --gap-100: 100px;
+
+  /* font-size */
+  --size-12: 12px;
+  --size-16: 16px;
+  --size-18: 18px;
+  --size-20: 20px;
+  --size-22: 22px;
+  --size-24: 24px;
+  --size-48: 48px;
+  --size-72: 72px;
 }
 
 body {
-  margin: 0 auto;
-  display: flex;
+  position: relative;
   place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  margin: 0;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-  #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-  }
+div {
+  width: 100%;
 }

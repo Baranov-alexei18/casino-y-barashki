@@ -13,8 +13,13 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.5.2",
+    "antd": "5.11",
+    "motion": "^11.15.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "6.28.1",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -46,7 +51,8 @@
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
       "yarn format",
-      "yarn lint:fix"
+      "yarn lint:fix",
+      "git add ."
     ]
   }
 }
