@@ -1,5 +1,15 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { Select } from "antd";
+import { motion } from "motion/react";
 
+import winSound from "@assets/audio/fortune-animals/win.mp3";
+import loseSound from "@assets/audio/fortune-animals/lose.mp3";
 import spinSound from "@assets/audio/fortune-animals/spin.mp3";
 import Bear from "@assets/images/games/fortune-animals/bear.png";
 import Bull from "@assets/images/games/fortune-animals/bull.png";
@@ -29,8 +39,9 @@ export const SLOT_IMAGES = [
 
 export const FortuneAnimalsPage = () => {
   const { data: balance, setMoney } = useStoreMoneyAccount((state) => state);
-  const [bet, setBet] = useState(100);
 
+  const [bet, setBet] = useState(200);
+  const [displayedPayout, setDisplayedPayout] = useState<number | null>(null);
   const [columns, setColumns] = useState([
     { images: getRandomImages(), isSpinning: false, stopIndex: 0 },
     { images: getRandomImages(), isSpinning: false, stopIndex: 0 },
@@ -39,7 +50,10 @@ export const FortuneAnimalsPage = () => {
 
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const resultCalculatedRef = useRef(false);
+
   const spinAudio = new Audio(spinSound);
+  const winAudio = new Audio(winSound);
+  const loseAudio = new Audio(loseSound);
 
   useEffect(() => {
     return () => {
@@ -47,9 +61,27 @@ export const FortuneAnimalsPage = () => {
     };
   }, []);
 
+  const betsOptions = useMemo(() => {
+    return [
+      { value: "100", label: "100", disabled: balance < 100 },
+      { value: "200", label: "200", disabled: balance < 200 },
+      { value: "300", label: "300", disabled: balance < 300 },
+      { value: "500", label: "500", disabled: balance < 500 },
+      { value: "1000", label: "1000", disabled: balance < 1000 },
+      { value: "2000", label: "2000", disabled: balance < 2000 },
+      { value: "5000", label: "5000", disabled: balance < 5000 },
+    ];
+  }, [balance]);
+
   const handleWin = (payout: number) => {
     const currentBalance = useStoreMoneyAccount.getState().data;
-    updateBalance(currentBalance + payout);
+
+    if (payout > 0) {
+      winAudio.play(); // Включаем звук выигрыша
+      animatePayout(payout);
+    } else {
+      loseAudio.play(); // Включаем звук проигрыша
+    }
   };
 
   const updateBalance = (total: number) => {
@@ -117,12 +149,6 @@ export const FortuneAnimalsPage = () => {
             const payout = calculatePayout(combination as CombinationKeys, bet);
 
             handleWin(payout);
-
-            alert(
-              `Central Row: ${JSON.stringify(
-                centralRow,
-              )}\nCombination: ${combination}\nYou bet: ${bet}\nYou won: ${payout}`,
-            );
           }, 1100);
         }
 
@@ -131,6 +157,33 @@ export const FortuneAnimalsPage = () => {
     },
     [bet, handleWin, spinAudio],
   );
+
+  const handleChange = (value: string) => {
+    setBet(Number(value));
+  };
+
+  const animatePayout = (payout: number) => {
+    setDisplayedPayout(0);
+
+    let currentPayout = 0;
+    const increment = Math.ceil(payout / 10);
+
+    const interval = setInterval(() => {
+      currentPayout += increment;
+      if (currentPayout >= payout) {
+        clearInterval(interval);
+        setDisplayedPayout(payout);
+
+        setTimeout(() => {
+          setDisplayedPayout(null);
+          const currentBalance = useStoreMoneyAccount.getState().data;
+          updateBalance(currentBalance + payout);
+        }, 2000);
+      } else {
+        setDisplayedPayout(currentPayout);
+      }
+    }, 100);
+  };
 
   return (
     <div className={styles.slotMachine}>
@@ -146,13 +199,42 @@ export const FortuneAnimalsPage = () => {
           />
         ))}
       </div>
-      <button
-        onClick={handleSpin}
-        disabled={columns.some((col) => col.isSpinning)}
-        className={styles.spinButton}
-      >
-        {columns.some((col) => col.isSpinning) ? "Spinning..." : "Spin"}
-      </button>
+      {displayedPayout !== null && (
+        <motion.div
+          className={styles.overlay}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className={styles.payoutOverlay}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.2 }}
+            transition={{ duration: 2, ease: "easeOut" }}
+          >
+            +{displayedPayout}
+          </motion.div>
+        </motion.div>
+      )}
+
+      <div className={styles.mainSlotWrapper}>
+        <Select
+          defaultValue="200"
+          className={styles.selectWrapper}
+          popupClassName={styles.selectMenuWrapper}
+          onChange={handleChange}
+          options={betsOptions}
+        />
+        <button
+          onClick={handleSpin}
+          disabled={columns.some((col) => col.isSpinning)}
+          className={styles.spinButton}
+        >
+          {columns.some((col) => col.isSpinning) ? "Spinning..." : "Spin"}
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,82 @@
+.wrapper {
+  color: var(--accent-gold) !important;
+  margin: var(--gap-100) auto;
+  max-width: 1300px;
+
+  @media (max-width: 600px) {
+    margin: var(--gap-60) var(--gap-16);
+  }
+}
+
+.gameWrapper {
+  background-color: inherit;
+  color: var(--accent-gold);
+
+  @media (max-width: 600px) {
+    width: 92%;
+  }
+}
+
+.gameCard {
+  cursor: pointer;
+  position: relative;
+  padding: 0 !important;
+  max-width: 300px;
+  width: 300px;
+  margin: 20px;
+
+  :hover {
+    box-shadow: 3px 3px 10px var(--secondary-text-color);
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
+    max-width: none;
+    min-width: fit-content;
+  }
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+
+  img {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 600px) {
+    img {
+      width: 100%;
+      margin: 0 auto;
+      height: auto;
+    }
+  }
+}
+
+.gameTitle {
+  position: absolute;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding-bottom: var(--gap-12);
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--glow-gold);
+  font-size: var(--size-24);
+  background-color: rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 2;
+}
+
+.gameCard:hover .gameTitle {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}

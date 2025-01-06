@@ -37,6 +37,7 @@ export const SlotColumn = memo(
             </div>
           ))}
         </motion.div>
+        <div className={styles.wrapperSquar} />
       </div>
     );
   },

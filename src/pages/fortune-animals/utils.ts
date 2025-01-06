@@ -5,19 +5,27 @@ import { CombinationKeys } from "./types";
 export const getCombination = (
   centralRow: { name: string; image: string }[],
 ) => {
-  if (centralRow.every((animal) => animal === centralRow[0])) {
-    return `3x${centralRow[0].name}`; // Три одинаковых животных
+  if (centralRow.every((animal) => animal.name === centralRow[0].name)) {
+    return `3x${centralRow[0].name}`;
   }
 
-  return "Mixed"; // Если животные разные
+  if (
+    centralRow[0].name === centralRow[1].name ||
+    centralRow[1].name === centralRow[2].name ||
+    centralRow[0].name === centralRow[2].name
+  ) {
+    return "2xAny";
+  }
+
+  return "None";
 };
 
 export const calculatePayout = (combination: CombinationKeys, bet: number) => {
-  const multiplier = WINNING_COMBINATIONS[combination] || 0; // Если нет совпадения, выигрыш равен 0
+  const multiplier = WINNING_COMBINATIONS[combination] || 0;
   return bet * multiplier;
 };
 
 export const getRandomImages = () => {
   const shuffled = [...SLOT_IMAGES].sort(() => Math.random() - 0.5);
-  return shuffled.concat(shuffled); // Удваиваем массив для бесшовной прокрутки
+  return [...shuffled, ...shuffled, ...shuffled];
 };

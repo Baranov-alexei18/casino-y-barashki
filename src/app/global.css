@@ -84,12 +84,14 @@
   --size-20: 20px;
   --size-22: 22px;
   --size-24: 24px;
+  --size-48: 48px;
+  --size-72: 72px;
 }
 
 body {
-  margin: 0 auto;
-  display: flex;
+  position: relative;
   place-items: center;
+  margin: 0;
 }
 
 div {

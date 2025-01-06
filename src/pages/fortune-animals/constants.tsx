@@ -10,13 +10,14 @@ export const ANIMAL_VALUES = {
 };
 
 export const WINNING_COMBINATIONS = {
-  "3xBear": 10, // Три медведя — ставка умножается на 10
-  "3xBull": 15, // Три быка — ставка умножается на 15
-  "3xGorilla": 20,
-  "3xLion": 25,
-  "3xOwl": 30,
-  "3xPanda": 35,
-  "3xRabbit": 40,
-  "3xRaccoon": 50,
-  Mixed: 2, // Разные животные — ставка умножается на 2
+  "3xBear": 5,
+  "3xBull": 8,
+  "3xGorilla": 10,
+  "3xLion": 18,
+  "3xOwl": 20,
+  "3xPanda": 28,
+  "3xRabbit": 30,
+  "3xRaccoon": 40,
+  "2xAny": 0.5,
+  None: 0,
 };
