@@ -51,9 +51,9 @@ export const FortuneAnimalsPage = () => {
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const resultCalculatedRef = useRef(false);
 
-  const spinAudio = new Audio(spinSound);
   const winAudio = new Audio(winSound);
   const loseAudio = new Audio(loseSound);
+  const spinAudio = new Audio(spinSound);
 
   useEffect(() => {
     return () => {
